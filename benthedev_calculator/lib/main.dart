@@ -45,18 +45,75 @@ class _CalculationState extends State<Calculation> {
       ResultDisplay(text: '0'),
       Row(
         children: [
-          CalculatorButton(
-            label: '7',
-            onTap: () => {},
-            size: 90,
-            backgroundColor: Colors.white,
-            labelColor: Colors.black,
-          )
+          _getButton(text: '7', onTap: () => numberPressed(7)),
+          _getButton(text: '8', onTap: () => numberPressed(8)),
+          _getButton(text: '9', onTap: () => numberPressed(9)),
+          _getButton(text: 'x', onTap: () => operatorPressed('*'), backgroundColor: Color.fromRGBO(220, 220, 220, 1)),
         ],
-      )
+      ),
+      Row(
+        children: [
+          _getButton(text: '4', onTap: () => numberPressed(4)),
+          _getButton(text: '5', onTap: () => numberPressed(5)),
+          _getButton(text: '6', onTap: () => numberPressed(6)),
+          _getButton(text: '/', onTap: () => operatorPressed('/'), backgroundColor: Color.fromRGBO(220, 220, 220, 1)),
+        ],
+      ),
+      Row(
+        children: [
+          _getButton(text: '1', onTap: () => numberPressed(1)),
+          _getButton(text: '2', onTap: () => numberPressed(2)),
+          _getButton(text: '3', onTap: () => numberPressed(3)),
+          _getButton(text: '+', onTap: () => operatorPressed('+'), backgroundColor: Color.fromRGBO(220, 220, 220, 1))
+        ],
+      ),
+      Row(
+        children: [
+          _getButton(text: '=', onTap: calculateResult, backgroundColor: Colors.orange, textColor: Colors.white),
+          _getButton(text: '0', onTap: () => numberPressed(0)),
+          _getButton(text: 'C', onTap: clear, backgroundColor: Color.fromRGBO(220, 220, 220, 1)),
+          _getButton(text: '-', onTap: () => operatorPressed('-'),backgroundColor: Color.fromRGBO(220, 220, 220, 1)),
+        ],
+      ),
     ]
     );
   }
+  Widget _getButton({String text, Function onTap, Color backgroundColor = Colors.white, Color textColor = Colors.black}) {
+  return CalculatorButton(
+    label: text,
+    onTap: onTap,
+    size: 90,
+    backgroundColor: backgroundColor,
+    labelColor: textColor,
+  );
+
+  operatorPressed(String operator) {}
+  numberPressed(int number) {
+    setState(() {
+    if (result != null) {
+      result = null;
+      firstOperand = number;
+      return;
+    }
+    if (firstOperand == null) {
+      firstOperand = number;
+      return;
+    }
+    if (operator == null) {
+      firstOperand = int.parse('$firstOperand$number');
+      return;
+    }
+    if (secondOperand == null) {
+      secondOperand = number;
+      return;
+    }
+    secondOperand = int.parse('$secondOperand$number');
+  });
+  }
+  calculateResult() {}
+  clear() {}
+}
+
 }
 
 class ResultDisplay extends StatelessWidget{
@@ -94,15 +151,13 @@ class CalculatorButton extends StatelessWidget{
   final Color backgroundColor;
   final Color labelColor;
 
-  Widget _getButton({String text, Function onTap, Color backgroundColor = Colors.white, Color textColor = Colors.black}) {
-    return CalculatorButton({
-      @required this.label,
-      @required this.onTap,
-      @required this.size,
-      this.backgroundColor = Colors.white,
-      this.labelColor = Colors.black
-    });
-  }
+  CalculatorButton({
+    required this.label,
+    required this.onTap,
+    required this.size,
+    this.backgroundColor = Colors.white,
+    this.labelColor = Colors.black
+  });
 
   @override
   Widget build(BuildContext context) {
