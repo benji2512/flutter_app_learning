@@ -2,7 +2,7 @@
     package="com.example.benthedev_calculator">
    <application
         android:label="benthedev_calculator"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/bngnewlauncher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
