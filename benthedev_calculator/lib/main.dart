@@ -1,199 +1,142 @@
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
-import 'buttons.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(CalculatorApp());
+}
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class CalculatorApp extends StatefulWidget{
   @override
-  Widget build(BuildContext context) {
+  _CalculatorAppState createState() => _CalculatorAppState();
+}
+
+class _CalculatorAppState extends State<CalculatorApp> {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+      )
+    );
+    super.initState();
+  }
+  
+  @override
+  Widget build(BuildContext context){
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      title: "BenTheDev's Calculator",
+      home: Scaffold(
+        body: Calculation()
+      ),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class Calculation extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _CalculationState createState() => _CalculationState();
+}
+class _CalculationState extends State<Calculation> {
+  int result = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      ResultDisplay(text: '0'),
+      Row(
+        children: [
+          CalculatorButton(
+            label: '7',
+            onTap: () => {},
+            size: 90,
+            backgroundColor: Colors.white,
+            labelColor: Colors.black,
+          )
+        ],
+      )
+    ]
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-  var userInput = '';
-  var answer = '';
+class ResultDisplay extends StatelessWidget{
 
-  final List<String> buttons = [
-    'C',
-    '+/-',
-    '%',
-    'DEL',
-    '7',
-    '8',
-    '9',
-    '/',
-    '4',
-    '5',
-    '6',
-    'x',
-    '1',
-    '2',
-    '3',
-    '-',
-    '0',
-    '.',
-    '=',
-    '+',
-  ];
+  final int result = 0;
+  final text;
+
+  ResultDisplay({@required this.text});
+
+  @override 
+  Widget build(BuildContext context){
+    return Container(
+      width: double.infinity,
+      height: 120,
+      color: Colors.black,
+      child: Container(
+        alignment: Alignment.bottomRight,
+        padding: EdgeInsets.only(right: 24, bottom: 24),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 34
+          ),
+          )
+      )
+    );
+  }
+}
+
+class CalculatorButton extends StatelessWidget{
+  final String label;
+  final VoidCallback onTap;
+  final double size;
+  final Color backgroundColor;
+  final Color labelColor;
+
+  Widget _getButton({String text, Function onTap, Color backgroundColor = Colors.white, Color textColor = Colors.black}) {
+    return CalculatorButton({
+      @required this.label,
+      @required this.onTap,
+      @required this.size,
+      this.backgroundColor = Colors.white,
+      this.labelColor = Colors.black
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-        title: new Text("BenTheDev's Calculator"),
-      ),
-      backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        userInput,
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        answer,
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    )
-                  ]),
-            ),
+    return Padding(
+      padding: EdgeInsets.all(6),
+      child: Ink(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+            color: Colors.grey,
+            offset: Offset(1,1),
+            blurRadius: 2
           ),
-          Expanded(
-            flex: 3,
-            child: Container(
-              child: GridView.builder(
-                  itemCount: buttons.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
-                  itemBuilder: (BuildContext context, int index) {
-                    // Clear Button
-                    if (index == 0) {
-                      return MyButton(
-                        buttontapped: () {
-                          setState(() {
-                            userInput = '';
-                            answer = '0';
-                          });
-                        },
-                        buttonText: buttons[index],
-                        color: Colors.blue[50],
-                        textColor: Colors.black,
-                      );
-                    }
-                    // +/- Button
-                    else if (index == 1) {
-                      return MyButton(
-                        buttonText: buttons[index],
-                        color: Colors.blue[50],
-                        textColor: Colors.black,
-                      );
-                    }
-                    // % Button
-                    else if (index == 2) {
-                      return MyButton(
-                        buttontapped: () {
-                          setState(() {
-                            userInput += buttons[index];
-                          });
-                        },
-                        buttonText: buttons[index],
-                        color: Colors.blue[50],
-                        textColor: Colors.black,
-                      );
-                    }
-                    // Delete Button
-                    else if (index == 3) {
-                      return MyButton(
-                        buttontapped: () {
-                          setState(() {
-                            userInput =
-                                userInput.substring(0, userInput.length - 1);
-                          });
-                        },
-                        buttonText: buttons[index],
-                        color: Colors.blue[50],
-                        textColor: Colors.black,
-                      );
-                    }
-                    // Equal_to Button
-                    else if (index == 18) {
-                      return MyButton(
-                        buttontapped: () {
-                          setState(() {
-                            equalPressed();
-                          });
-                        },
-                        buttonText: buttons[index],
-                        color: Colors.orange[700],
-                        textColor: Colors.white,
-                      );
-                    }
-                    // other buttons
-                    else {
-                      return MyButton(
-                        buttontapped: () {
-                          setState(() {
-                            userInput += buttons[index];
-                          });
-                        },
-                        buttonText: buttons[index],
-                        color: isOperator(buttons[index])
-                            ? Colors.blueAccent
-                            : Colors.white,
-                        textColor: isOperator(buttons[index])
-                            ? Colors.white
-                            : Colors.black,
-                      );
-                    }
-                  }),
-            ),
-          ),
-        ],
+          ],
+        borderRadius: BorderRadius.all(
+          Radius.circular(size/2)
+        ),
+        color: backgroundColor,
       ),
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(size/2)),
+        ),
+        onTap: onTap,
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 24, color: labelColor),
+          )
+        ),
+      ),
+    )
     );
-  }
-
-  bool isOperator(String x) {
-    if (x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
-      return true;
-    }
-    return false;
-  }
-
-  // function to calculate the input operation
-  void equalPressed() {
-    String finaluserinput = userInput;
-    finaluserinput = userInput.replaceAll('x', '*');
-
-    Parser p = Parser();
-    Expression exp = p.parse(finaluserinput);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    answer = eval.toString();
   }
 }
